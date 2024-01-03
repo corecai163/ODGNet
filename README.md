@@ -12,7 +12,7 @@ Install pointnet2_ops_lib and Chamfer Distance in the extension Folder:
 python3 setup.py install
 
 
-# Dataset
+# Dataset and Python Libs Requirements
 Please Check PoinTr (https://github.com/yuxumin/PoinTr/tree/master)
 
 # Pretrained Models
