@@ -1,0 +1,2 @@
+#CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --master_port=13200 --nproc_per_node=2 main.py --launcher pytorch --sync_bn --config ./cfgs/ShapeNet34_models/UpTrans.yaml --start_ckpts ./experiments/UpTrans/ShapeNet34_models/ckpt-last --exp_name shape34_upTrans --val_freq 5 --val_interval 50 
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --master_port=13200 --nproc_per_node=2 main.py --launcher pytorch --sync_bn --config ./cfgs/ShapeNet34_models/UpTrans.yaml --exp_name shape34_upTrans512L0 --val_freq 10 --val_interval 100 

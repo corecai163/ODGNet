@@ -1,0 +1,46 @@
+optimizer : {
+  type: AdamW,
+  kwargs: {
+  lr : 0.0005,
+  weight_decay : 0.0005
+}}
+
+scheduler: {
+  type: LambdaLR,
+  kwargs: {
+  decay_step: 20,
+  lr_decay: 0.8,
+  lowest_decay: 0.01  # min lr = lowest_decay * lr
+}}
+
+bnmscheduler: {
+  type: Lambda,
+  kwargs: {
+  decay_step: 20,
+  bn_decay: 0.5,
+  bn_momentum: 0.9,
+  lowest_decay: 0.01
+}}
+
+dataset : {
+  train : { _base_: cfgs/dataset_configs/ShapeNet-34.yaml, 
+            others: {subset: 'train'}},
+  val : { _base_: cfgs/dataset_configs/ShapeNet-34.yaml, 
+            others: {subset: 'test'}},
+  test : { _base_: cfgs/dataset_configs/ShapeNet-Unseen21.yaml, 
+            others: {subset: 'test'}}}   
+            
+model : {
+  NAME: UpTrans, num_pred: 8192, num_seeds: 1024, seed_fea: 128, dim_feat: 512, num_dicts: 512, upscales: [1,2,4], l2_loss: 0}
+
+loss : {
+  sparse_loss_weight: 1.0,
+  dense_loss_weight: 1.0,
+  dz_weight: 1.0,
+  orth_weight: 1.0,
+}
+total_bs : 32
+step_per_update : 1
+max_epoch : 400
+
+consider_metric: CDL1

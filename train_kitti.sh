@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 main.py --launcher pytorch --sync_bn --config ./cfgs/KITTI_models/UpTrans.yaml --exp_name Kitti_UP --val_freq 10 --val_interval 100 
