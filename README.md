@@ -1,6 +1,8 @@
 # ODGNet
 Orthogonal Dictionary Guided Shape Completion Network for Point Cloud
 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/orthogonal-dictionary-guided-shape-completion/point-cloud-completion-on-shapenet)](https://paperswithcode.com/sota/point-cloud-completion-on-shapenet?p=orthogonal-dictionary-guided-shape-completion)
+
 # Environment
 
 Pytorch 1.12.0 with Nvidia GPUs
