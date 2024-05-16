@@ -5,7 +5,7 @@
 import torch
 import torch.nn as nn
 import math
-from extensions.chamfer_dist import ChamferDistanceL1,ChamferDistanceL1_split
+from extensions.chamfer_dist import ChamferDistanceL2,ChamferDistanceL2_split
 #from extensions.expansion_penalty.expansion_penalty_module import expansionPenaltyModule
 from models.pointnet import PointNet_SA_Module_KNN, MLP_Res, UpTransformer, Transformer
 from models.upsample import PSCU

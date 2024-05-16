@@ -1,0 +1,6 @@
+experiments/
+odgenv/
+
+data/ShapeNet55.zip
+data/shapenet_subset
+data/shapenet_pc

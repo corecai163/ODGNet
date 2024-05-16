@@ -40,6 +40,6 @@ loss : {
 }
 total_bs : 32
 step_per_update : 1
-max_epoch : 400
+max_epoch : 5
 
 consider_metric: CDL1

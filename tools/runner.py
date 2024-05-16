@@ -349,7 +349,7 @@ def test_net(args, config, test_writer=None):
     # Criterion
     ChamferDisL1 = ChamferDistanceL1()
     ChamferDisL2 = ChamferDistanceL2()
-
+    print("ALDO WAS HERE")
     test(base_model, test_dataloader, ChamferDisL1, ChamferDisL2, test_writer, args, config, logger=logger)
 
 def test(base_model, test_dataloader, ChamferDisL1, ChamferDisL2, test_writer, args, config, logger = None):
@@ -362,12 +362,15 @@ def test(base_model, test_dataloader, ChamferDisL1, ChamferDisL2, test_writer, a
     n_samples = len(test_dataloader) # bs is 1
     
     with torch.no_grad():
+        print(n_samples)
         for idx, (taxonomy_ids, model_ids, data) in enumerate(test_dataloader):
+            print(idx)
             taxonomy_id = taxonomy_ids[0] if isinstance(taxonomy_ids[0], str) else taxonomy_ids[0].item()
             model_id = model_ids[0]
 
             npoints = config.dataset.test._base_.N_POINTS
             dataset_name = config.dataset.test._base_.NAME
+            # print("Aldo entering")
             if dataset_name == 'PCN':
                 partial = data[0].cuda()
                 gt = data[1].cuda()
@@ -393,11 +396,13 @@ def test(base_model, test_dataloader, ChamferDisL1, ChamferDisL2, test_writer, a
                 category_metrics[taxonomy_id].update(_metrics)
 
             elif dataset_name == 'ShapeNet':
+                # print("Aldo entered 1")
                 gt = data.cuda()
                 choice = [torch.Tensor([1,1,1]),torch.Tensor([1,1,-1]),torch.Tensor([1,-1,1]),torch.Tensor([-1,1,1]),
                             torch.Tensor([-1,-1,1]),torch.Tensor([-1,1,-1]), torch.Tensor([1,-1,-1]),torch.Tensor([-1,-1,-1])]
                 num_crop = int(npoints * crop_ratio[args.mode])
-                for item in choice:           
+                for item in choice:
+                    # print("Aldo entering forever")          
                     partial, _ = misc.seprate_point_cloud(gt, npoints, num_crop, fixed_points = item)
                     # NOTE: subsample the input
                     partial = misc.fps(partial, 2048)
