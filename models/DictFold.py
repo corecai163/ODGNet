@@ -154,50 +154,36 @@ class FeaRefine(nn.Module):
     def __init__(self, dim=512, hidd_dim=64, num_dicts=128):
         super(FeaRefine, self).__init__()
         self.num_dicts = num_dicts
-        self.dict_embed = nn.Embedding(dim, num_dicts)
-        #self.merge = nn.Conv1d(dim+dim_feat, dim, 1)
+        self.dict_embed = nn.Parameter(torch.randn(dim, num_dicts))
         self.query = nn.Conv1d(dim, hidd_dim, 1)
         self.key = nn.Conv1d(dim, hidd_dim, 1)
-        #self.linear = nn.Conv1d(dim+dim, dim, 1)
     
     def forward(self, feat, surge=True):
         """
         Args:
-            feat: Tensor (b, dim_feat, 1)
+            feat: Tensor (b, dim_feat, N)
         """
-        B,C,N = feat.size()
-        #print(feat.size())
-        dict_fea = self.dict_embed.weight # (1, dim, 128)
-        #shape_code = coarse_shapecode.repeat(1,1,128)
-        feature_memory = torch.nn.functional.normalize(dict_fea,dim=0)
-        cons = feature_memory.transpose(0,1) @ feature_memory
-        #Iden = torch.eye(self.num_dict,device='cuda')
+        B, C, N = feat.size()
+        dict_fea = self.dict_embed  # (dim, num_dicts)
+        feature_memory = torch.nn.functional.normalize(dict_fea, dim=0)
+        cons = feature_memory.transpose(0, 1) @ feature_memory
 
-        dict_fea = dict_fea.unsqueeze(0).repeat(B,1,1)
+        dict_fea = dict_fea.unsqueeze(0).repeat(B, 1, 1)
         
         q = self.query(feat)  # (b, 64, N)
-        #query_embed.unsqueeze(0) # (1, 512, num_dicts)
-        value = dict_fea #self.merge(torch.cat([shape_code,dict_fea],dim=1)) # (1, dim, 128)
-        k = self.key(value) # (1, 64, 128)
+        value = dict_fea
+        k = self.key(value)  # (b, 64, num_dicts)
         
         d_k = k.size(1)
-        # print(agg.size())
-        # qk_rel = q - k
-        # w = self.weight_mlp(qk_rel)
-        # w = torch.softmax(w, -1)
+        scores = torch.matmul(q.transpose(-2, -1), k) / math.sqrt(d_k)  # (b, N, num_dicts)
+        scores = torch.softmax(scores, dim=-1)  # (b, N, num_dicts)
         
-        # Attention
-        scores = torch.matmul(q.transpose(-2, -1), k) / math.sqrt(d_k) # (b, N, 128)
-        scores = torch.softmax(scores, dim=-1) # (b, N, 128)
-        
-        output = torch.matmul(scores, value.transpose(-2, -1)) # (b, N, dim)
-        #output = self.linear(torch.cat([output.transpose(-2, -1),feat],dim=1))
-        surg = (output.transpose(-2, -1)+feat)/2
+        output = torch.matmul(scores, value.transpose(-2, -1))  # (b, N, dim)
+        surg = (output.transpose(-2, -1) + feat) / 2
 
         if surge:
-            surg=dict_fea
-        return surg,scores
-        #return (output.transpose(-2, -1)+feat)/2, cons
+            surg = dict_fea
+        return surg, scores
       
 class FeaRefine1(nn.Module):
     def __init__(self, dim=512, hidd_dim=64, num_dicts=128):
