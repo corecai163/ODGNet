@@ -6,6 +6,7 @@ import torch
 from torch import nn, einsum
 from pointnet2_ops.pointnet2_utils import furthest_point_sample, \
     gather_operation, ball_query, three_nn, three_interpolate, grouping_operation
+import numpy as np
 
 class Conv1d(nn.Module):
     def __init__(self, in_channel, out_channel, kernel_size=1, stride=1,  if_bn=True, activation_fn=torch.relu):
@@ -182,6 +183,29 @@ def sample_and_group_all(xyz, points, use_xyz=True):
 
     return new_xyz, new_points, idx, grouped_xyz
 
+def data_augment(xyz, points, rotation_angle=np.pi / 4, jitter_sigma=0.01):
+    batch_size, _, num_points = xyz.shape
+
+    theta = np.random.uniform(-rotation_angle, rotation_angle, batch_size)
+    cos_theta = np.cos(theta)
+    sin_theta = np.sin(theta)
+
+    rotation_matrices = torch.tensor([
+        [cos_theta,  sin_theta, 0],
+        [-sin_theta, cos_theta, 0],
+        [0, 0, 1]
+    ], dtype=xyz.dtype).permute(2, 0, 1).repeat(batch_size, 1, 1)
+
+    # Apply random rotation
+    xyz_rotated = torch.bmm(rotation_matrices, xyz)
+
+    # Add Jitter
+    jitter = torch.randn(xyz_rotated.shape).to(xyz.device) * jitter_sigma
+    xyz_augmented = xyz_rotated + jitter
+
+    points_augmented = points
+
+    return xyz_augmented, points_augmented
 
 class PointNet_SA_Module(nn.Module):
     def __init__(self, npoint, nsample, radius, in_channel, mlp, if_bn=True, group_all=False, use_xyz=True):
@@ -221,6 +245,10 @@ class PointNet_SA_Module(nn.Module):
             new_xyz: Tensor, (B, 3, npoint)
             new_points: Tensor, (B, mlp[-1], npoint)
         """
+
+        # Data augmentation
+        xyz, points = data_augment(xyz, points)
+        
         if self.group_all:
             new_xyz, new_points, idx, grouped_xyz = sample_and_group_all(xyz, points, self.use_xyz)
         else:
