@@ -19,7 +19,7 @@ Please Check PoinTr (https://github.com/yuxumin/PoinTr/tree/master)
 
 # Pretrained Models
 
-[[Google Drive](https://drive.google.com/file/d/1kfjvgIwJQn5p3MoUpyHEeyBfP7Lm5ePy/view?usp=sharing)]
+[[Google Drive](https://drive.google.com/file/d/1rXf4ul34QOW_7JBulYaz_pOI4LHUCMCe/view?usp=sharing)]
 
 # Training/Testing
 Please check the bash files, e.g., "sh utrain.sh" for the PCN dataset.
