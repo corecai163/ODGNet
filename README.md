@@ -32,7 +32,7 @@ If our method and results are useful for your research, please consider citing:
 ```
 @inproceedings{ODGNet,
     title={Orthogonal Dictionary Guided Shape Completion Network for Point Cloud},
-    author={Pingping Cai, Deja Scott, Xiaoguang Li, Song Wang},
+    author={Cai, Pingping and Scott, Deja and Li, Xiaoguang and Wang, Song},
     booktitle={AAAI},
     year={2024},
 }
